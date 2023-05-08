@@ -3,7 +3,7 @@ const path = require('path');
 const route = path.join(__dirname, 'secret-folder');
 
 fs.readdir(route,{ withFileTypes: true },(err, files) => {
-    if(err) console.log(err);
+    if(err) console.log(err.message);
     else{
     	files.forEach(file => {
     		let route2 = path.join(__dirname, 'secret-folder', file['name']);
