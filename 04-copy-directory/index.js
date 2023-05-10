@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const route = path.join(__dirname, 'files');
-const dirCopy = path.join(__dirname, 'copyFiles/');
+const dirCopy = path.join(__dirname, 'files-copy');
 
-
-fs.readdir(route, {withFileTypes: true}, (err,files) =>{
+fs.promises.rm(dirCopy, {recursive: true, force: true}).
+finally(() =>{fs.readdir(route, {withFileTypes: true}, (err,files) =>{
 	if(err) console.log(err);
 	files.forEach(file => {
 		if(file.isFile()){
@@ -19,4 +19,5 @@ fs.readdir(route, {withFileTypes: true}, (err,files) =>{
 			})
 		}
 	})
-})
+})})
+
