@@ -5,8 +5,10 @@ const routeTemplate = path.join(__dirname, 'template.html');
 const writableRoute = path.join(__dirname,'project-dist');
 const fileWritable = path.join(writableRoute, 'style.css');
 const writableStream = fs.createWriteStream(fileWritable, 'utf-8');
+const assets = path.join(__dirname, 'assets');
+const copyDirectoryFolder = path.join(writableRoute, 'assets');
 
-fs.promises.mkdir(writableRoute, {recursive: true});
+createDirectory(writableRoute)
 async function createStyleFile(){
 	fs.readdir(route, { withFileTypes: true }, (err,files) => {
 		if(err) console.log(err);
@@ -41,22 +43,23 @@ async function createHtmlFile(){
 
 createHtmlFile();
 
-// async function copyDirectory(){
-// 	const route = path.join(__dirname, 'assets');
-// 	await	fs.readdir(route, {withFileTypes: true}, (err,files) =>{
-// 		if(err) console.log(err);
-// 		files.forEach(async (file) => {
-// 			if(file.isFile()){
-// 				const route2 = path.join(route, file['name']);
-// 				const copyFile = path.join(writableRoute, file['name']);
-// 				const read = fs.createReadStream(route2, 'utf-8');
-// 				const write = fs.createWriteStream(copyFile, 'utf-8');
-// 					read.on('data', () => {
-// 						write.write('data', 'utf-8');
-// 					})
-// 			}
-// 		})
-// 	})
-// }
 
-// copyDirectory();
+async function createDirectory(name) {
+  await fs.promises.mkdir(name, { recursive: true });
+}
+
+async function copyDirectory(i, o) {
+  await createDirectory(o);
+  await fs.promises.readdir(i, { withFileTypes: true, recursive: true}) 
+  .then ( dir => {
+    dir.forEach(async folder => {
+    await createDirectory(path.join(o, folder.name))
+    const file = await fs.promises.readdir(path.join(i, folder.name), { withFileTypes: true, recursive: true});
+    file.forEach(item => {
+      fs.promises.copyFile( path.join(i, folder.name, item.name), path.join(o, folder.name, item.name));
+    });
+   });
+  });
+};
+
+copyDirectory(assets, copyDirectoryFolder);
