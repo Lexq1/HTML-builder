@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const route = path.join(__dirname, 'secret-folder');
+const route = path.join(__dirname, 'secret-folder'); 
 
 fs.readdir(route,{ withFileTypes: true },(err, files) => {
     if(err) console.log(err.message);
